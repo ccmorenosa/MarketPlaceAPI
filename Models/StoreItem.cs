@@ -16,6 +16,7 @@ public class StoreItem
     [Key]
     public long StoreId { get; set; }
     public string Name { get; set; } = default!;
+    public string Currency { get; set; } = "EUR";
 
     // Many-To-Many relation with products table via StoreProduct table.
     // Store HAS MANY Products.
@@ -37,5 +38,6 @@ public class StoreItemDTO
     [Key]
     public long StoreId { get; set; }
     public string Name { get; set; } = default!;
+    public string Currency { get; set; } = "EUR";
 
 }

@@ -90,6 +90,7 @@ namespace MarketPlaceAPI.Controllers
             }
 
             storeItem.Name = storeItemDTO.Name;
+            storeItem.Currency = storeItemDTO.Currency;
 
             try
             {
@@ -172,6 +173,7 @@ namespace MarketPlaceAPI.Controllers
             var storeItem = new StoreItem
             {
                 Name = storeItemDTO.Name,
+                Currency = storeItemDTO.Currency,
                 Products = new List<StoreProduct>()
             };
 

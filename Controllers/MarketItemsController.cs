@@ -17,7 +17,8 @@ namespace MarketPlaceAPI.Controllers
         new StoreItemDTO
         {
             StoreId = storeItem.StoreId,
-            Name = storeItem.Name
+            Name = storeItem.Name,
+            Currency = storeItem.Currency
         };
 
         protected static ProductItemDTO productToDTO(ProductItem productItem) =>
