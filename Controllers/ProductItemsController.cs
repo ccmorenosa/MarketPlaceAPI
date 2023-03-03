@@ -85,7 +85,14 @@ namespace MarketPlaceAPI.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(productItemDTO).State = EntityState.Modified;
+            var productItem = await _context.Products.FindAsync(id);
+            if (productItem == null)
+            {
+                return NotFound();
+            }
+
+            productItem.Name = productItemDTO.Name;
+            productItem.Life = productItemDTO.Life;
 
             try
             {

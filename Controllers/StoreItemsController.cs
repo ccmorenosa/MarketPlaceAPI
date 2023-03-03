@@ -76,14 +76,20 @@ namespace MarketPlaceAPI.Controllers
         // PUT: StoreItems/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutStoreItem(long id, StoreItemDTO storeItem)
+        public async Task<IActionResult> PutStoreItem(long id, StoreItemDTO storeItemDTO)
         {
-            if (id != storeItem.StoreId)
+            if (id != storeItemDTO.StoreId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(storeItem).State = EntityState.Modified;
+            var storeItem = await _context.Stores.FindAsync(id);
+            if (storeItem == null)
+            {
+                return NotFound();
+            }
+
+            storeItem.Name = storeItemDTO.Name;
 
             try
             {
