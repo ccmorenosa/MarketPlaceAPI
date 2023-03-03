@@ -13,6 +13,13 @@ namespace MarketPlaceAPI.Controllers
             _context = context;
         }
 
+        protected static StoreItemDTO storeToDTO(StoreItem storeItem) =>
+        new StoreItemDTO
+        {
+            StoreId = storeItem.StoreId,
+            Name = storeItem.Name
+        };
+
         protected static ProductItemDTO productToDTO(ProductItem productItem) =>
         new ProductItemDTO
         {
@@ -21,11 +28,11 @@ namespace MarketPlaceAPI.Controllers
             Life = productItem.Life
         };
 
-        protected static StoreItemDTO storeToDTO(StoreItem storeItem) =>
-        new StoreItemDTO
+        protected static TagItemDTO tagToDTO(TagItem tagItem) =>
+        new TagItemDTO
         {
-            StoreId = storeItem.StoreId,
-            Name = storeItem.Name
+            TagId = tagItem.TagId,
+            Name = tagItem.Name
         };
 
     }

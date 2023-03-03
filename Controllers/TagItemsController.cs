@@ -11,29 +11,24 @@ namespace MarketPlaceAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class TagItemsController : ControllerBase
+    public class TagItemsController : MarketItemsController
     {
-        private readonly MarketContext _context;
-
-        public TagItemsController(MarketContext context)
-        {
-            _context = context;
-        }
+        public TagItemsController(MarketContext context) : base(context) { }
 
         // GET: api/TagItems
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TagItem>>> GetTags()
+        public async Task<ActionResult<IEnumerable<TagItemDTO>>> GetTags()
         {
           if (_context.Tags == null)
           {
               return NotFound();
           }
-            return await _context.Tags.ToListAsync();
+            return await _context.Tags.Select(t => tagToDTO(t)).ToListAsync();
         }
 
         // GET: api/TagItems/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<TagItem>> GetTagItem(long id)
+        public async Task<ActionResult<TagItemDTO>> GetTagItem(long id)
         {
           if (_context.Tags == null)
           {
@@ -46,20 +41,26 @@ namespace MarketPlaceAPI.Controllers
                 return NotFound();
             }
 
-            return tagItem;
+            return tagToDTO(tagItem);
         }
 
         // PUT: api/TagItems/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTagItem(long id, TagItem tagItem)
+        public async Task<IActionResult> PutTagItem(long id, TagItemDTO tagItemDTO)
         {
-            if (id != tagItem.TagId)
+            if (id != tagItemDTO.TagId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(tagItem).State = EntityState.Modified;
+            var tagItem = await _context.Tags.FindAsync(id);
+            if (tagItem == null)
+            {
+                return NotFound();
+            }
+
+            tagItem.Name = tagItemDTO.Name;
 
             try
             {
@@ -83,16 +84,27 @@ namespace MarketPlaceAPI.Controllers
         // POST: api/TagItems
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<TagItem>> PostTagItem(TagItem tagItem)
+        public async Task<ActionResult<TagItemDTO>> PostTagItem(TagItemDTO tagItemDTO)
         {
-          if (_context.Tags == null)
-          {
-              return Problem("Entity set 'MarketContext.Tags'  is null.");
-          }
+            if (_context.Tags == null)
+            {
+                return Problem("Entity set 'MarketContext.Tags'  is null.");
+            }
+
+            var tagItem = new TagItem
+            {
+                Name = tagItemDTO.Name,
+                Products = new List<ProductTag>()
+            };
+
             _context.Tags.Add(tagItem);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetTagItem), new { id = tagItem.TagId }, tagItem);
+            return CreatedAtAction(
+                nameof(GetTagItem),
+                new { id = tagItem.TagId },
+                tagToDTO(tagItem)
+            );
         }
 
         // DELETE: api/TagItems/5
