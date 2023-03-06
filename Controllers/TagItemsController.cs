@@ -1,7 +1,7 @@
 /* MarketPlaceAPI.Controllers.TagItemsController
  *
  * Controller class to administrate the items in the Tags table. This class
- * inherits from the MarketItemsController.
+ * inherits from the MarketItemsController class.
  */
 
 // using System;

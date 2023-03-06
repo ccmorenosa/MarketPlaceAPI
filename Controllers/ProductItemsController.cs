@@ -1,7 +1,7 @@
 /* MarketPlaceAPI.Controllers.ProductItemsController
  *
  * Controller class to administrate the items in the Products table. This class
- * inherits from the MarketItemsController.
+ * inherits from the MarketItemsController class.
  */
 
 // using System;

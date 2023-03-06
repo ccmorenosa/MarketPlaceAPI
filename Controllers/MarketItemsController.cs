@@ -2,7 +2,6 @@
  *
  * Base controller for the tables of the Market database containing common
  * functions and properties shared by the other controllers.
- *
  */
 
 using Microsoft.AspNetCore.Mvc;

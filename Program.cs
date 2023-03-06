@@ -1,6 +1,12 @@
+/* Program.cs
+ *
+ * Main source that build anr run the API.
+ */
+
 using Microsoft.EntityFrameworkCore;
 using MarketPlaceAPI.Models;
 
+// Create the app builder with the arguments.
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -13,6 +19,7 @@ builder.Services.AddDbContext<MarketContext>(
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Create the application.
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

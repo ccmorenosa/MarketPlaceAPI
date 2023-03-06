@@ -1,14 +1,14 @@
-/*
-    Table defining the relation between Stores and Products.
-*/
-using Microsoft.EntityFrameworkCore;
+/* MarketPlaceAPI.Models.StoreProduct
+ *
+ * Define the model that holds the relation between Stores and Products.
+ */
 
 namespace MarketPlaceAPI.Models;
 
-
-/*
-    Define class for the relation between Store and Product.
-*/
+/// <summary>
+/// Class <c>StoreProduct</c> represents the Many To Many relation between
+/// Stores and Products tables.
+/// </summary>
 public class StoreProduct
 {
 
@@ -20,7 +20,10 @@ public class StoreProduct
     public long ProductId { get; set; }
     public ProductItem Product { get; set; } = new ProductItem();
 
-    // Include price for this combination.
-    public decimal price { get; set; }
+    /// <value>
+    /// Property <c>Price</c> represent the price that a certain product has in
+    /// a given store.
+    /// </value>
+    public decimal Price { get; set; }
 
 }

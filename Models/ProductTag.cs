@@ -1,14 +1,15 @@
-/*
-    Table defining the relation between Products and Tags.
-*/
-using Microsoft.EntityFrameworkCore;
+/* MarketPlaceAPI.Models.ProductTag
+ *
+ * Define the model that holds the relation between Products and Tags.
+ */
 
 namespace MarketPlaceAPI.Models;
 
 
-/*
-    Define class for the relation between Product and Tag.
-*/
+/// <summary>
+/// Class <c>ProductTag</c> represents the Many To Many relation between
+/// Products and Tags tables.
+/// </summary>
 public class ProductTag
 {
 
