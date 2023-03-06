@@ -5,15 +5,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MarketPlaceAPI.Models;
 
+
 /*
     Define class for the Market database.
 */
 public class MarketContext: DbContext
 {
     public MarketContext(DbContextOptions<MarketContext> options)
-        : base(options)
-    {
-    }
+        : base(options) { }
 
     // Add tables for the DB.
     public DbSet<StoreItem> Stores { get; set; } = null!;

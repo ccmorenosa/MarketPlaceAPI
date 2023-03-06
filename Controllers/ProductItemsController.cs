@@ -9,6 +9,8 @@ using MarketPlaceAPI.Models;
 
 namespace MarketPlaceAPI.Controllers
 {
+
+
     [Route("[controller]")]
     [ApiController]
     public class ProductItemsController : MarketItemsController
@@ -18,23 +20,31 @@ namespace MarketPlaceAPI.Controllers
 
         // GET: ProductItems
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductItemDTO>>> GetProducts()
+        public async
+        Task<ActionResult<IEnumerable<ProductItemDTO>>> GetProducts()
         {
-          if (_context.Products == null)
-          {
-              return NotFound();
-          }
-            return await _context.Products.Select(p => productToDTO(p)).ToListAsync();
+
+            if (_context.Products == null)
+            {
+                return NotFound();
+            }
+
+            return await _context.Products
+                .Select(p => productToDTO(p))
+                .ToListAsync();
+
         }
 
         // GET: ProductItems/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductItemDTO>> GetProductItem(long id)
         {
-          if (_context.Products == null)
-          {
-              return NotFound();
-          }
+
+            if (_context.Products == null)
+            {
+                return NotFound();
+            }
+
             var productItem = await _context.Products.FindAsync(id);
 
             if (productItem == null)
@@ -42,44 +52,55 @@ namespace MarketPlaceAPI.Controllers
                 return NotFound();
             }
 
-            Console.WriteLine(productItem.Stores);
-
             return productToDTO(productItem);
+
         }
 
         // GET: ProductItems/5/stores
         [HttpGet("{id}/stores")]
-        public async Task<ActionResult<IEnumerable<StoreItemDTO>>> GetProductItemStores(long id)
+        public async
+        Task<ActionResult<IEnumerable<StoreItemDTO>>> GetProductItemStores (
+            long id
+        )
         {
-          if (_context.Products == null)
-          {
-              return NotFound();
-          }
 
-          var productItem = await _context.Products.SingleAsync(p => p.ProductId == id);
+            if (_context.Products == null)
+            {
+                return NotFound();
+            }
 
-          var storeProductItems = _context.Entry(productItem).Collection(p => p.Stores).Query();
+            var productItem = await _context.Products
+                .SingleAsync(p => p.ProductId == id);
 
-          var storeItems = new List<StoreItemDTO>();
+            var storeProductItems = _context.Entry(productItem)
+                .Collection(p => p.Stores)
+                .Query();
 
-          foreach (var storeProductItem in storeProductItems)
-          {
-              var storeItem = await _context.Stores.FindAsync(storeProductItem.StoreId);
+            var storeItems = new List<StoreItemDTO>();
 
-              if (storeItem != null)
-              storeItems.Add(storeToDTO(storeItem));
+            foreach (var storeProductItem in storeProductItems)
+            {
+                var storeItem = await _context.Stores
+                    .FindAsync(storeProductItem.StoreId);
 
-          }
+                if (storeItem != null)
+                storeItems.Add(storeToDTO(storeItem));
 
-          return storeItems;
+            }
+
+            return storeItems;
 
         }
 
         // PUT: ProductItems/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<ActionResult> PutProductItem(long id, ProductItemDTO productItemDTO)
+        public async Task<ActionResult> PutProductItem(
+            long id,
+            ProductItemDTO productItemDTO
+        )
         {
+
             if (id != productItemDTO.ProductId)
             {
                 return BadRequest();
@@ -111,13 +132,19 @@ namespace MarketPlaceAPI.Controllers
             }
 
             return NoContent();
+
         }
 
         // PUT: ProductItems/3/AddStore/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{productId}/AddStore/{storeId}")]
-        public async Task<IActionResult> PutProductStoreItem(long productId, long storeId, StoreItemDTO storeItemDTO)
+        public async Task<IActionResult> PutProductStoreItem(
+            long productId,
+            long storeId,
+            StoreItemDTO storeItemDTO
+        )
         {
+
             if (storeId != storeItemDTO.StoreId)
             {
                 return BadRequest();
@@ -128,6 +155,7 @@ namespace MarketPlaceAPI.Controllers
             {
                 return NotFound();
             }
+
             var storeItem = await _context.Stores.FindAsync(storeId);
             if (storeItem == null)
             {
@@ -158,16 +186,20 @@ namespace MarketPlaceAPI.Controllers
             }
 
             return NoContent();
+
         }
 
         // POST: ProductItems
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<ProductItemDTO>> PostProductItem(ProductItemDTO productItemDTO)
+        public async Task<ActionResult<ProductItemDTO>> PostProductItem(
+            ProductItemDTO productItemDTO
+        )
         {
+
             if (_context.Products == null)
             {
-                return Problem("Entity set 'MarketContext.Products'  is null.");
+                return Problem("Entity set 'MarketContext.Products' is null.");
             }
 
             var productItem = new ProductItem
@@ -179,6 +211,7 @@ namespace MarketPlaceAPI.Controllers
             };
 
             _context.Products.Add(productItem);
+
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(
@@ -186,16 +219,19 @@ namespace MarketPlaceAPI.Controllers
                 new { id = productItem.ProductId },
                 productToDTO(productItem)
             );
+
         }
 
         // DELETE: ProductItems/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProductItem(long id)
         {
+
             if (_context.Products == null)
             {
                 return NotFound();
             }
+
             var productItem = await _context.Products.FindAsync(id);
             if (productItem == null)
             {
@@ -203,15 +239,22 @@ namespace MarketPlaceAPI.Controllers
             }
 
             _context.Products.Remove(productItem);
+
             await _context.SaveChangesAsync();
 
             return NoContent();
+
         }
 
         private bool ProductItemExists(long id)
         {
-            return (_context.Products?.Any(e => e.ProductId == id)).GetValueOrDefault();
+
+            return (_context.Products?.Any(e => e.ProductId == id))
+                .GetValueOrDefault();
+
         }
 
     }
+
+
 }

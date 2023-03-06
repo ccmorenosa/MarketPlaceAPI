@@ -9,6 +9,8 @@ using MarketPlaceAPI.Models;
 
 namespace MarketPlaceAPI.Controllers
 {
+
+
     [Route("[controller]")]
     [ApiController]
     public class StoreItemsController : MarketItemsController
@@ -20,21 +22,28 @@ namespace MarketPlaceAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<StoreItemDTO>>> GetStores()
         {
-          if (_context.Stores == null)
-          {
-              return NotFound();
-          }
-            return await _context.Stores.Select(s => storeToDTO(s)).ToListAsync();
+
+            if (_context.Stores == null)
+            {
+                return NotFound();
+            }
+
+            return await _context.Stores
+                .Select(s => storeToDTO(s))
+                .ToListAsync();
+
         }
 
         // GET: StoreItems/5
         [HttpGet("{id}")]
         public async Task<ActionResult<StoreItemDTO>> GetStoreItem(long id)
         {
-          if (_context.Stores == null)
-          {
-              return NotFound();
-          }
+
+            if (_context.Stores == null)
+            {
+                return NotFound();
+            }
+
             var storeItem = await _context.Stores.FindAsync(id);
 
             if (storeItem == null)
@@ -43,41 +52,52 @@ namespace MarketPlaceAPI.Controllers
             }
 
             return storeToDTO(storeItem);
+
         }
 
         // GET: StoreItems/5/products
         [HttpGet("{id}/products")]
-        public async Task<ActionResult<IEnumerable<ProductItemDTO>>> GetStoreItemProduct(long id)
+        public async
+        Task<ActionResult<IEnumerable<ProductItemDTO>>> GetStoreItemProduct(
+            long id
+        )
         {
-          if (_context.Stores == null)
-          {
-              return NotFound();
-          }
 
-          var storesItem = await _context.Stores.SingleAsync(p => p.StoreId == id);
+            if (_context.Stores == null)
+            {
+                return NotFound();
+            }
 
-          var storeProductItems = _context.Entry(storesItem).Collection(p => p.Products).Query();
+            var storesItem = await _context.Stores
+                .SingleAsync(p => p.StoreId == id);
 
-          var productItems = new List<ProductItemDTO>();
+            var storeProductItems = _context.Entry(storesItem)
+                .Collection(p => p.Products)
+                .Query();
 
-          foreach (var storeProductItem in storeProductItems)
-          {
-              var productItem = await _context.Products.FindAsync(storeProductItem.ProductId);
+            var productItems = new List<ProductItemDTO>();
 
-              if (productItem != null)
-              productItems.Add(productToDTO(productItem));
+            foreach (var storeProductItem in storeProductItems)
+            {
+                var productItem = await _context.Products
+                    .FindAsync(storeProductItem.ProductId);
 
-          }
+                if (productItem != null)
+                productItems.Add(productToDTO(productItem));
 
-          return productItems;
+            }
+
+            return productItems;
 
         }
 
         // PUT: StoreItems/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutStoreItem(long id, StoreItemDTO storeItemDTO)
+        public async
+        Task<IActionResult> PutStoreItem(long id, StoreItemDTO storeItemDTO)
         {
+
             if (id != storeItemDTO.StoreId)
             {
                 return BadRequest();
@@ -109,13 +129,19 @@ namespace MarketPlaceAPI.Controllers
             }
 
             return NoContent();
+
         }
 
         // PUT: StoreItems/AddProduct/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{storeId}/AddProduct/{productId}")]
-        public async Task<IActionResult> PutProductStoreItem(long storeId, long productId, ProductItemDTO productItemDTO)
+        public async Task<IActionResult> PutProductStoreItem(
+            long storeId,
+            long productId,
+            ProductItemDTO productItemDTO
+        )
         {
+
             if (productId != productItemDTO.ProductId)
             {
                 return BadRequest();
@@ -126,6 +152,7 @@ namespace MarketPlaceAPI.Controllers
             {
                 return NotFound();
             }
+
             var productItem = await _context.Products.FindAsync(productId);
             if (productItem == null)
             {
@@ -156,6 +183,7 @@ namespace MarketPlaceAPI.Controllers
             }
 
             return NoContent();
+
         }
 
         // POST: StoreItems
@@ -165,9 +193,10 @@ namespace MarketPlaceAPI.Controllers
             StoreItemDTO storeItemDTO
         )
         {
+
             if (_context.Stores == null)
             {
-                return Problem("Entity set 'MarketContext.Stores'  is null.");
+                return Problem("Entity set 'MarketContext.Stores' is null.");
             }
 
             var storeItem = new StoreItem
@@ -178,6 +207,7 @@ namespace MarketPlaceAPI.Controllers
             };
 
             _context.Stores.Add(storeItem);
+
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(
@@ -196,6 +226,7 @@ namespace MarketPlaceAPI.Controllers
             {
                 return NotFound();
             }
+
             var storeItem = await _context.Stores.FindAsync(id);
             if (storeItem == null)
             {
@@ -203,15 +234,22 @@ namespace MarketPlaceAPI.Controllers
             }
 
             _context.Stores.Remove(storeItem);
+
             await _context.SaveChangesAsync();
 
             return NoContent();
+
         }
 
         private bool StoreItemExists(long id)
         {
-            return (_context.Stores?.Any(e => e.StoreId == id)).GetValueOrDefault();
+
+            return (_context.Stores?.Any(e => e.StoreId == id))
+                .GetValueOrDefault();
+
         }
 
     }
+
+
 }

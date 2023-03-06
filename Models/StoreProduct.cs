@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MarketPlaceAPI.Models;
 
+
 /*
     Define class for the relation between Store and Product.
 */
