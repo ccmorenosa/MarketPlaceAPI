@@ -27,3 +27,21 @@ public class StoreProduct
     public decimal Price { get; set; }
 
 }
+
+
+/// <summary>
+/// Class <c>StoreProductDTO</c> is the corresponding DTO for the
+/// stores/product relation model.
+/// </summary>
+public class StoreProductDTO
+{
+
+    // Columns of the store table.
+
+    /// <value>
+    /// Property <c>Price</c> represent the price that a certain product has in
+    /// a given store.
+    /// </value>
+    public decimal Price { get; set; }
+
+}

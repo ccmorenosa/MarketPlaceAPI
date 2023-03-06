@@ -91,6 +91,28 @@ namespace MarketPlaceAPI.Controllers
             Name = tagItem.Name
         };
 
+        /// <summary>
+        /// Test if the relation between a store and a products exists.
+        /// (
+        ///     <param name="productId">ID of the product.</param>,
+        ///     <param name="storeId">ID of the store.</param>
+        /// ).
+        /// </summary>
+        /// <paramref name="productId"/>
+        /// <paramref name="storeId"/>
+        /// <returns>
+        /// A boolean indicating whether the relation exists or not.
+        /// </returns>
+        protected bool RelationStoreProductExists(
+            long productId,
+            long storeId
+        ) =>
+        (
+            _context.Products?
+            .First(p => p.ProductId == productId).Stores
+            .Any(s => s.StoreId == storeId)
+        ).GetValueOrDefault();
+
     }
 
 

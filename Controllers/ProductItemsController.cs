@@ -121,17 +121,17 @@ namespace MarketPlaceAPI.Controllers
         /// related with the product in the table that has the given ID.
         /// </returns>
         /// <remarks>
-        /// Routed as <c>GET: /ProductItems/{id}/stores</c>.
+        /// Routed as <c>GET: /ProductItems/{id}/Stores</c>.
         /// <example>
         /// For example:
         /// <code>
-        /// GET [API_URL]/ProductItems/5/stores
+        /// GET [API_URL]/ProductItems/5/Stores
         /// </code>
         /// Will return a list of stores associates with the item that match
         /// ID=5 in the Products table.
         /// </example>
         /// </remarks>
-        [HttpGet("{id}/stores")]
+        [HttpGet("{id}/Stores")]
         public async
         Task<ActionResult<IEnumerable<StoreItemDTO>>> GetProductItemStores (
             long id
@@ -264,46 +264,39 @@ namespace MarketPlaceAPI.Controllers
         /// (
         ///     <paramref name="productId"/>,
         ///     <paramref name="storeId"/>,
-        ///     <paramref name="storeItemDTO"/>
+        ///     <paramref name="storeProductDTO"/>
         /// ).
         /// </summary>
         /// <param name="productId">Product item ID.</param>
         /// <param name="storeId">Store item ID.</param>
-        /// <param name="storeItemDTO">Store DTO structure with the store info.
-        /// (TODO: Change to storeProductItem object!)</param>
+        /// <param name="storeProductDTO">Store/Product relation item DTO
+        /// structure with the relation info.</param>
         /// <returns>
-        /// BadRequest if the ID in the request URL and in of the DTO object
-        /// are different (deprecate). NotFound if the Products table is null,
-        /// if the queries for any of the given IDs (product and store) are
-        /// null or if when updating, the product item was not found. Otherwise
-        /// it returns NoContent.
+        /// NotFound if the Products table is null, if the queries for any of
+        /// the given IDs (product and store) are null or if when updating, the
+        /// product item was not found. Otherwise it returns NoContent.
         /// </returns>
         /// <remarks>
-        /// Routed as <c>PUT: /ProductItems/{productId}/AddStore/{storeId}</c>.
+        /// Routed as
+        /// <c>PUT: /ProductItems/{productId}/Store/{storeId}</c>.
         /// <example>
         /// For example:
         /// <code>
-        /// PUT [API_URL]/ProductItems/5/AddStore/3
+        /// PUT [API_URL]/ProductItems/5/Store/3
         /// </code>
-        /// Along with a body which contain a StoreItemDTO structure, will
+        /// Along with a body which contain a StoreProductDTO structure, will
         /// associate the product item that match ID=5 in the Products table
-        /// with the store item that match ID=3 in the Stores table.
+        /// with the store item that match ID=3 in the Stores table. If the
+        /// relation already exists, it fill update the Price value of it.
         /// </example>
         /// </remarks>
-        [HttpPut("{productId}/AddStore/{storeId}")]
+        [HttpPut("{productId}/Store/{storeId}")]
         public async Task<IActionResult> PutProductStoreItem(
             long productId,
             long storeId,
-            StoreItemDTO storeItemDTO
+            StoreProductDTO storeProductDTO
         )
         {
-
-            // Check if the request is valid.
-            // TODO: Deprecate.
-            if (storeId != storeItemDTO.StoreId)
-            {
-                return BadRequest();
-            }
 
             // Find the product item with the given ID.
             var productItem = await _context.Products.FindAsync(productId);
@@ -314,27 +307,40 @@ namespace MarketPlaceAPI.Controllers
                 return NotFound();
             }
 
-            // Find the store item with the given ID.
-            var storeItem = await _context.Stores.FindAsync(storeId);
+            // Check if the relation does not exist. If so, create a new
+            // relation. Otherwise update the existing one.
+            if (!RelationStoreProductExists(productId, storeId)) {
 
-            // Check the store item exists.
-            if (storeItem == null)
-            {
-                return NotFound();
+                // Find the store item with the given ID.
+                var storeItem = await _context.Stores.FindAsync(storeId);
+
+                // Check the store item exists.
+                if (storeItem == null)
+                {
+                    return NotFound();
+                }
+
+                // Create the new storeProductItem object to store the
+                // relation.
+                var storeProduct = new StoreProduct{
+                    StoreId = storeId,
+                    Store = storeItem,
+                    Product = productItem,
+                    ProductId = productId,
+                    Price = storeProductDTO.Price
+                };
+
+                // Add the relation to both store and product.
+                productItem.Stores.Add(storeProduct);
+                storeItem.Products.Add(storeProduct);
+
+            } else {
+
+                productItem.Stores
+                    .First(s => s.StoreId == storeId)
+                    .Price = storeProductDTO.Price;
+
             }
-
-            // Create the new storeProductItem object to store the relation.
-            // TODO: Verify if the relation exists and if so, get the item and
-            // modify it.
-            var storeProduct = new StoreProduct();
-
-            // Add store and product.
-            storeProduct.Store = storeItem;
-            storeProduct.Product = productItem;
-
-            // Add the relation to both store and product.
-            productItem.Stores.Add(storeProduct);
-            storeItem.Products.Add(storeProduct);
 
             // Try to save the changes.
             try
