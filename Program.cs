@@ -19,8 +19,21 @@ builder.Services.AddDbContext<MarketContext>(
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Add policy.
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "_react_app",
+      builder =>
+      {
+          builder.WithOrigins("http://localhost:3000");
+      });
+});
+
 // Create the application.
 var app = builder.Build();
+
+// Enable CORS.
+app.UseCors("_react_app");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
